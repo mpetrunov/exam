@@ -46,21 +46,23 @@ function calculateMetrics() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
     
-    let months = 6;
+    let activeMonths = 6;
     if (startDate && endDate) {
         const start = new Date(startDate);
         const end = new Date(endDate);
         if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-            months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
-            if (months <= 0) months = 1;
+            activeMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+            if (activeMonths <= 0) activeMonths = 1;
         }
     }
+    
+    let gridMonths = activeMonths < 6 ? 6 : activeMonths;
 
     // Render Chart
-    renderChart(p, l, c, months);
+    renderChart(p, l, c, activeMonths, gridMonths);
 }
 
-function renderChart(totalProspects, totalLeads, totalCustomers, months) {
+function renderChart(totalProspects, totalLeads, totalCustomers, activeMonths, gridMonths) {
     const container = document.getElementById('chart-container');
     container.innerHTML = ''; // clear
 
@@ -90,10 +92,10 @@ function renderChart(totalProspects, totalLeads, totalCustomers, months) {
             ${Array.from({length: 7}).map((_, i) => '<div class="grid-line-vertical"></div>').join('')}
         </div>
         <div class="chart-grid-horizontal">
-            ${Array.from({length: months}).map((_, i) => '<div class="grid-line-horizontal"></div>').join('')}
+            ${Array.from({length: gridMonths}).map((_, i) => '<div class="grid-line-horizontal"></div>').join('')}
         </div>
         <div class="y-axis">
-            ${Array.from({length: months}).map((_, i) => `<span>${i + 1}</span>`).join('')}
+            ${Array.from({length: gridMonths}).map((_, i) => `<span>${i + 1}</span>`).join('')}
         </div>
         <div class="x-axis">
             ${Array.from({length: 7}).map((_, i) => `
@@ -107,27 +109,31 @@ function renderChart(totalProspects, totalLeads, totalCustomers, months) {
     `;
 
     // Process each month incrementally (showing cumulative pipeline)
-    for (let i = 1; i <= months; i++) {
-        // Growth factor - linear accumulation as in standard models mapping to end goal
-        let factor = i / months;
-        let p = Math.round(totalProspects * factor);
-        let l = Math.round(totalLeads * factor);
-        let c = Math.round(totalCustomers * factor);
+    for (let i = 1; i <= gridMonths; i++) {
+        if (i <= activeMonths) {
+            // Growth factor - linear accumulation as in standard models mapping to end goal
+            let factor = i / activeMonths;
+            let p = Math.round(totalProspects * factor);
+            let l = Math.round(totalLeads * factor);
+            let c = Math.round(totalCustomers * factor);
 
-        // Convert values to percentages of chart width
-        let pWidth = (p / axisLimit) * 100;
-        let lWidth = (l / axisLimit) * 100;
-        let cWidth = (c / axisLimit) * 100;
+            // Convert values to percentages of chart width
+            let pWidth = (p / axisLimit) * 100;
+            let lWidth = (l / axisLimit) * 100;
+            let cWidth = (c / axisLimit) * 100;
 
-        html += `
-            <div class="chart-row" 
-                 onmousemove="showTooltip(event, ${i}, ${p}, ${l}, ${c})" 
-                 onmouseleave="hideTooltip()">
-                <div class="bar bar-prospects" style="width: ${pWidth}%;"></div>
-                <div class="bar bar-leads" style="width: ${lWidth}%;"></div>
-                <div class="bar bar-customers" style="width: ${cWidth}%;"></div>
-            </div>
-        `;
+            html += `
+                <div class="chart-row" 
+                     onmousemove="showTooltip(event, ${i}, ${p}, ${l}, ${c})" 
+                     onmouseleave="hideTooltip()">
+                    <div class="bar bar-prospects" style="width: ${pWidth}%;"></div>
+                    <div class="bar bar-leads" style="width: ${lWidth}%;"></div>
+                    <div class="bar bar-customers" style="width: ${cWidth}%;"></div>
+                </div>
+            `;
+        } else {
+            html += `<div class="chart-row"></div>`;
+        }
     }
 
     container.innerHTML = html;
