@@ -173,7 +173,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Chart Panel */
 .chart-panel {
     position: relative;
-    padding: 30px;
+    padding: 10px 0;
     overflow: hidden;
 }
 
@@ -191,17 +191,51 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     position: absolute;
     top: 0;
     left: 40px;
-    right: 0;
+    right: 40px; /* Leave space on the right for bars that go past the last grid line */
     bottom: 30px;
     display: flex;
     justify-content: space-between;
     pointer-events: none;
 }
 
-.grid-line {
+.chart-grid-horizontal {
+    position: absolute;
+    top: 0;
+    left: 30px; /* Offset to touch the y-axis numbers acting as a tick */
+    right: 40px;
+    bottom: 30px; /* Offset for x-axis */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    pointer-events: none;
+}
+
+.grid-line-vertical {
     width: 1px;
+    min-width: 1px;
     height: 100%;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+}
+
+.grid-line-horizontal {
+    position: relative;
+    width: 100%;
+    height: 1px;
+    min-height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+}
+
+/* Brighten the left protruding part (ticks linking to the numbers) */
+.grid-line-horizontal::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px; /* 40px(vertical grid start) - 30px(horizontal grid start) layout diff */
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
 }
 
 .y-axis {
@@ -209,25 +243,66 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     left: 0;
     top: 0;
     bottom: 30px;
+    width: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding-right: 10px;
     font-size: 11px;
     color: #C5CAD3;
     pointer-events: none;
 }
 
+.y-axis span {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 5px;
+}
+
+.y-axis-title {
+    position: absolute;
+    left: -10px;
+    top: calc(50% - 15px);
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 11px;
+    color: #C5CAD3;
+    font-weight: 500;
+}
+
 .x-axis {
     position: absolute;
     left: 40px;
-    right: 0;
+    right: 40px;
     bottom: 0;
+    height: 30px;
     display: flex;
     justify-content: space-between;
-    padding-top: 10px;
     font-size: 11px;
     color: #C5CAD3;
+}
+
+.x-tick-group {
+    position: relative;
+    width: 1px;
+    min-width: 1px;
+}
+
+.x-tick {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 8px; /* Taller */
+    background: rgba(255, 255, 255, 0.6); /* Much more visible */
+    border: none;
+}
+
+.x-tick-group span {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%); /* Perfect centering */
+    white-space: nowrap;
 }
 
 .chart-row {
@@ -236,19 +311,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     display: flex;
     align-items: center;
     margin-left: 20px;
+    margin-right: 40px; /* Keep bars relative to the grid width */
 }
 
 .bar {
     position: absolute;
-    height: 60%;
-    border-radius: 2px;
+    height: 80%;
+    border-radius: 0;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
     left: 0;
     transition: width 0.3s ease-out;
 }
 
-.bar-prospects { background: #64748B; z-index: 1; }
-.bar-leads { background: #94A3B8; z-index: 2; }
-.bar-customers { background: #CBD5E1; z-index: 3; }
+.bar-prospects { background: #5A667A; z-index: 1; height: 90%; }
+.bar-leads { background: #8290A6; z-index: 2; height: 75%; }
+.bar-customers { background: #AEBACD; z-index: 3; height: 60%; }
 
 .tooltip {
     position: absolute;
@@ -273,46 +351,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .stat-card.panel {
     padding: 20px;
-    background: #747f93; 
     border: none;
 }
+
+/* Match the cards with the chart bar colors */
+.stat-card.panel:nth-child(1) { background: #5A667A; }
+.stat-card.panel:nth-child(2) { background: #8290A6; }
+.stat-card.panel:nth-child(3) { background: #AEBACD; }
 
 .stat-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
 }
 
 .stat-header h3 {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 500;
     color: #1a1e26;
     flex: 1;
 }
 
 .stat-header .icon {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .stat-percent {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
-    font-size: 28px;
+    font-size: 34px;
     font-weight: 700;
     margin: 10px 0;
     color: #fff;
+    text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .progress-bar-bg {
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.2);
+    background: #222732; /* Changed to match dark panel color */
     border-radius: 4px;
     overflow: hidden;
 }

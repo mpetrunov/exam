@@ -50,21 +50,37 @@ function renderChart(totalProspects, totalLeads, totalCustomers) {
     const months = 6;
     let maxX = totalProspects > 0 ? totalProspects : 100;
     
-    // Round upper limit for max X axis (closest multiple of 20 that is > maxProspects)
-    let axisLimit = Math.ceil(maxX / 20) * 20; 
-    if(axisLimit < 120) axisLimit = 120; // Default min bounds matching the image layout
+    // Scale limits by jumping in powers of 10 and doubling within them (120->240->480->960 => 1200->2400...)
+    let m = 1;
+    let axisLimit = 120;
+    while(true) {
+        if (maxX <= 120 * m) { axisLimit = 120 * m; break; }
+        if (maxX <= 240 * m) { axisLimit = 240 * m; break; }
+        if (maxX <= 480 * m) { axisLimit = 480 * m; break; }
+        if (maxX <= 960 * m) { axisLimit = 960 * m; break; }
+        m *= 10;
+    }
 
     // Chart Area structure
     
     let html = `
+        <div class="y-axis-title">Months</div>
         <div class="chart-grid">
-            ${Array.from({length: 7}).map((_, i) => '<div class="grid-line"></div>').join('')}
+            ${Array.from({length: 7}).map((_, i) => '<div class="grid-line-vertical"></div>').join('')}
+        </div>
+        <div class="chart-grid-horizontal">
+            ${Array.from({length: months}).map((_, i) => '<div class="grid-line-horizontal"></div>').join('')}
         </div>
         <div class="y-axis">
             ${Array.from({length: months}).map((_, i) => `<span>${i + 1}</span>`).join('')}
         </div>
         <div class="x-axis">
-            ${Array.from({length: 7}).map((_, i) => `<span>${Math.round(i * (axisLimit / 6))} people</span>`).join('')}
+            ${Array.from({length: 7}).map((_, i) => `
+                <div class="x-tick-group">
+                    <div class="x-tick"></div>
+                    <span>${Math.round(i * (axisLimit / 6))} people</span>
+                </div>
+            `).join('')}
         </div>
         <div class="tooltip" id="chart-tooltip"></div>
     `;
