@@ -5,6 +5,10 @@ function calculateMetrics() {
     const leadRate = parseFloat(document.getElementById('leadRate').value);
     const prospectRate = parseFloat(document.getElementById('prospectRate').value);
 
+    // Set CSS custom properties for slider track shading
+    document.getElementById('leadRate').style.setProperty('--val', leadRate + '%');
+    document.getElementById('prospectRate').style.setProperty('--val', prospectRate + '%');
+
     // Update labels for sliders
     document.getElementById('leadRateLabel').innerText = leadRate.toFixed(2) + '%';
     document.getElementById('prospectRateLabel').innerText = prospectRate.toFixed(2) + '%';

@@ -437,7 +437,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     -webkit-appearance: none;
     width: 100%;
     height: 8px;
-    background: #4A5568;
+    background: linear-gradient(to right, #CBD5E1 var(--val, 50%), #313745 var(--val, 50%));
     border-radius: 4px;
     outline: none;
 }
@@ -445,10 +445,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .custom-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     background: #fff;
+    border: 5px solid #CBD5E1;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.custom-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: 5px solid #CBD5E1;
     cursor: pointer;
     box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
