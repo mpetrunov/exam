@@ -121,3 +121,10 @@ function hideTooltip() {
 
 // Initial Run
 window.addEventListener('DOMContentLoaded', calculateMetrics);
+
+function updateCurrencySymbol(symbol) {
+    const symbols = document.querySelectorAll('.currency-symbol');
+    symbols.forEach(el => {
+        el.innerText = symbol;
+    });
+}
