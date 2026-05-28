@@ -69,6 +69,35 @@ body {
     border-color: #4A5568;
 }
 
+/* Currency input styling */
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 12px;
+    color: #64748B;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* Remove default arrows (spinners) from number inputs */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.input-field.with-symbol {
+    padding-left: 26px;
+}
+
 /* Make calendar icon visible on dark background */
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.8);
