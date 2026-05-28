@@ -42,16 +42,29 @@ function calculateMetrics() {
     document.getElementById('leadFill').style.width = lPercent + '%';
     document.getElementById('customerFill').style.width = cPercent + '%';
 
+    // Calculate months difference
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    let months = 6;
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+            months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+            if (months <= 0) months = 1;
+        }
+    }
+
     // Render Chart
-    renderChart(p, l, c);
+    renderChart(p, l, c, months);
 }
 
-function renderChart(totalProspects, totalLeads, totalCustomers) {
+function renderChart(totalProspects, totalLeads, totalCustomers, months) {
     const container = document.getElementById('chart-container');
     container.innerHTML = ''; // clear
 
     // Config
-    const months = 6;
     let maxX = totalProspects > 0 ? totalProspects : 100;
     
     // Scale limits by jumping in powers of 10 and doubling within them (120->240->480->960 => 1200->2400...)
@@ -65,10 +78,14 @@ function renderChart(totalProspects, totalLeads, totalCustomers) {
         m *= 10;
     }
 
+    // Helper for translations inside chart
+    const tMonths = window.currentLanguage === 'bg' ? 'Месеци' : 'Months';
+    const tPeople = window.currentLanguage === 'bg' ? 'души' : 'people';
+
     // Chart Area structure
     
     let html = `
-        <div class="y-axis-title">Months</div>
+        <div class="y-axis-title">${tMonths}</div>
         <div class="chart-grid">
             ${Array.from({length: 7}).map((_, i) => '<div class="grid-line-vertical"></div>').join('')}
         </div>
@@ -82,7 +99,7 @@ function renderChart(totalProspects, totalLeads, totalCustomers) {
             ${Array.from({length: 7}).map((_, i) => `
                 <div class="x-tick-group">
                     <div class="x-tick"></div>
-                    <span>${Math.round(i * (axisLimit / 6))} people</span>
+                    <span>${Math.round(i * (axisLimit / 6))} ${tPeople}</span>
                 </div>
             `).join('')}
         </div>
@@ -147,4 +164,48 @@ function updateCurrencySymbol(symbol) {
     symbols.forEach(el => {
         el.innerText = symbol;
     });
+}
+
+// Language Translation Logic
+window.currentLanguage = 'en';
+
+const translations = {
+    'bg': {
+        'Language': 'Език',
+        'Currency': 'Валута',
+        'Campaign Start': 'Начало на кампания',
+        'Campaign End': 'Край на кампания',
+        'Total Revenue': 'Общи приходи',
+        'Avg. Order Value': 'Средна поръчка',
+        'Prospects': 'Контакти',
+        'Leads': 'Потенциални Клиенти',
+        'Customers': 'Клиенти',
+        'Lead Response Rate': 'Oтговори от Потенциални Клиенти',
+        'Prospect Response Rate': 'Отговори от Контакти',
+        'Months': 'Месеци',
+        'people': 'души'
+    }
+};
+
+function changeLanguage(lang) {
+    window.currentLanguage = lang;
+    const isBg = lang === 'bg';
+    const dict = translations['bg'];
+
+    // Translate Labels
+    document.querySelectorAll('label').forEach(label => {
+        if (!label.dataset.en) label.dataset.en = label.innerText.trim();
+        const key = label.dataset.en;
+        label.innerText = (isBg && dict[key]) ? dict[key] : key;
+    });
+
+    // Translate Card Headers
+    document.querySelectorAll('.stat-header h3').forEach(h3 => {
+        if (!h3.dataset.en) h3.dataset.en = h3.innerText.trim();
+        const key = h3.dataset.en;
+        h3.innerText = (isBg && dict[key]) ? dict[key] : key;
+    });
+
+    // Re-render chart to apply translations to chart elements
+    calculateMetrics();
 }
