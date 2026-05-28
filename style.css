@@ -104,18 +104,52 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
 
-/* Custom Dropdown Styling for Language */
+/* Custom Dropdown Styling for Language & Currency */
 .custom-dropdown {
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+}
+
+.dropdown-selected {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
+    padding: 10px 12px;
 }
 
 .dropdown-value {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.dropdown-options {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: #1a1e26;
+    border: 1px solid #313745;
+    border-radius: 6px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.custom-dropdown.active .dropdown-options {
+    display: block;
+}
+
+.dropdown-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+}
+
+.dropdown-option:hover {
+    background: #222732;
 }
 
 .flag-icon {
