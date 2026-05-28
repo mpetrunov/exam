@@ -69,6 +69,31 @@ body {
     border-color: #4A5568;
 }
 
+/* Make calendar icon visible on dark background */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+}
+
+/* Custom Dropdown Styling for Language */
+.custom-dropdown {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.dropdown-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flag-icon {
+    width: 18px;
+    border-radius: 2px;
+}
+
 /* Main Content Layout */
 .main-content {
     display: flex;
